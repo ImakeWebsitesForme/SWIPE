@@ -1,0 +1,78 @@
+// Array to hold uploaded videos temporarily
+let videos = [];
+
+// Function to upload video and display in the feed
+function uploadVideo() {
+    const fileInput = document.getElementById('fileInput');
+    const titleInput = document.getElementById('titleInput');
+    const videoFeed = document.getElementById('videoFeed');
+
+    // Check if both video and title are provided
+    if (!fileInput.files.length || !titleInput.value) {
+        alert('Please select a video and enter a title!');
+        return;
+    }
+
+    // Create a new video object
+    const video = {
+        title: titleInput.value,
+        url: URL.createObjectURL(fileInput.files[0]),
+        likes: 0,
+        comments: [],
+    };
+
+    // Add the video to the videos array
+    videos.push(video);
+
+    // Create HTML structure for the video card
+    const videoCard = document.createElement('div');
+    videoCard.classList.add('video-card');
+    videoCard.innerHTML = `
+        <video controls>
+            <source src="${video.url}" type="video/mp4" />
+        </video>
+        <div class="video-info">
+            <h3>${video.title}</h3>
+            <div>
+                <button onclick="likeVideo(${videos.length - 1})">Like (${video.likes})</button>
+                <button onclick="addComment(${videos.length - 1})">Comment</button>
+            </div>
+            <div id="comments-${videos.length - 1}"></div>
+        </div>
+    `;
+
+    // Append the new video card to the feed
+    videoFeed.prepend(videoCard);
+
+    // Reset input fields
+    fileInput.value = '';
+    titleInput.value = '';
+}
+
+// Function to like a video
+function likeVideo(index) {
+    videos[index].likes += 1;
+    updateLikes(index);
+}
+
+// Function to add a comment to a video
+function addComment(index) {
+    const comment = prompt('Enter your comment:');
+    if (comment) {
+        videos[index].comments.push(comment);
+        updateComments(index);
+    }
+}
+
+// Function to update likes display
+function updateLikes(index) {
+    const videoCard = document.querySelectorAll('.video-card')[index];
+    const likeButton = videoCard.querySelector('button');
+    likeButton.innerText = `Like (${videos[index].likes})`;
+}
+
+// Function to update comments display
+function updateComments(index) {
+    const commentsContainer = document.getElementById(`comments-${index}`);
+    commentsContainer.innerHTML = videos[index].comments.map(comment => `<p>${comment}</p>`).join('');
+}
