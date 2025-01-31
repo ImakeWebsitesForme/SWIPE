@@ -76,3 +76,4 @@ function updateComments(index) {
     const commentsContainer = document.getElementById(`comments-${index}`);
     commentsContainer.innerHTML = videos[index].comments.map(comment => `<p>${comment}</p>`).join('');
 }
+tiktok
